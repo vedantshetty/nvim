@@ -2,13 +2,13 @@
 -- This file is automatically loaded by lazyvim.config.init.
 
 local function augroup(name)
-  return vim.api.nvim_create_augroup("lazyvim_" .. name, { clear = true })
+  return vim.api.nvim_create_augroup("vedant_defaults" .. name, { clear = true })
 end
 
 -- Check if we need to reload the file when it changed
 vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
   group = augroup("checktime"),
-  command = "checktime",
+  command = "checktime", -- Checks if the file has been changed outside the editor and reloads it
 })
 
 -- Highlight on yank
