@@ -23,19 +23,11 @@ map("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
 -- Telescope
 --<leader>/ Live Grep
 --<leader><space><space>  Find files
---d Clear search with <esc>
+
+-- Clear search with <esc>
 map({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and clear hlsearch" })
 
--- Clear search, diff update and redraw
--- taken from runtime/lua/_editor.lua
-map(
-  "n",
-  "<leader>ur",
-  "<Cmd>nohlsearch<Bar>diffupdate<Bar>normal! <C-L><CR>",
-  { desc = "Redraw / clear hlsearch / diff update" }
-)
-
--- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n
+-- n is always forward and N is always backward(different behaviours for ? and / was confusing)
 map("n", "n", "'Nn'[v:searchforward].'zv'", { expr = true, desc = "Next search result" })
 map("x", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search result" })
 map("o", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search result" })
@@ -43,7 +35,7 @@ map("n", "N", "'nN'[v:searchforward].'zv'", { expr = true, desc = "Prev search r
 map("x", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev search result" })
 map("o", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev search result" })
 
--- Add undo break-points
+-- Add undo breakpoints to segment my typing into smaller chunks based on punctuation allowing for fine grained undo
 map("i", ",", ",<c-g>u")
 map("i", ".", ".<c-g>u")
 map("i", ";", ";<c-g>u")
@@ -51,15 +43,9 @@ map("i", ";", ";<c-g>u")
 -- save file
 map({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save file" })
 
---keywordprg
-map("n", "<leader>K", "<cmd>norm! K<cr>", { desc = "Keywordprg" })
-
--- better indenting
+-- Simplify visual indenting by automatically reselecting text to allow immediete indent changes again without having to reselect text
 map("v", "<", "<gv")
 map("v", ">", ">gv")
-
--- lazy
-map("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
 
 -- new file
 map("n", "<leader>fn", "<cmd>enew<cr>", { desc = "New File" })
@@ -70,11 +56,6 @@ map("n", "<leader>xq", "<cmd>copen<cr>", { desc = "Quickfix List" })
 map("n", "[q", vim.cmd.cprev, { desc = "Previous quickfix" })
 map("n", "]q", vim.cmd.cnext, { desc = "Next quickfix" })
 
--- formatting
-map({ "n", "v" }, "<leader>cf", function()
-  Util.format({ force = true })
-end, { desc = "Format" })
-
 -- diagnostic
 local diagnostic_goto = function(next, severity)
   local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
@@ -83,31 +64,38 @@ local diagnostic_goto = function(next, severity)
     go({ severity = severity })
   end
 end
+
 map("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
 map("n", "]d", diagnostic_goto(true), { desc = "Next Diagnostic" })
 map("n", "[d", diagnostic_goto(false), { desc = "Prev Diagnostic" })
-map("n", "]e", diagnostic_goto(true, "ERROR"), { desc = "Next Error" })
-map("n", "[e", diagnostic_goto(false, "ERROR"), { desc = "Prev Error" })
-map("n", "]w", diagnostic_goto(true, "WARN"), { desc = "Next Warning" })
-map("n", "[w", diagnostic_goto(false, "WARN"), { desc = "Prev Warning" })
-
--- stylua: ignore start
 
 -- toggle options
-map("n", "<leader>us", function() Util.toggle("spell") end, { desc = "Toggle Spelling" })
-map("n", "<leader>uw", function() Util.toggle("wrap") end, { desc = "Toggle Word Wrap" })
+map("n", "<leader>us", function()
+  Util.toggle("spell")
+end, { desc = "Toggle Spelling" })
+map("n", "<leader>uw", function()
+  Util.toggle("wrap")
+end, { desc = "Toggle Word Wrap" })
 
 -- Set Conceal Level to hide extra text and provide a clean look of the code, prepare conceal configuration for each language
 local conceallevel = vim.o.conceallevel > 0 and vim.o.conceallevel or 3
-map("n", "<leader>uc", function() Util.toggle("conceallevel", false, {0, conceallevel}) end, { desc = "Toggle Conceal" })
+map("n", "<leader>uc", function()
+  Util.toggle("conceallevel", false, { 0, conceallevel })
+end, { desc = "Toggle Conceal" })
 
 if vim.lsp.inlay_hint then
-  map("n", "<leader>uh", function() vim.lsp.inlay_hint(0, nil) end, { desc = "Toggle Inlay Hints" })
+  map("n", "<leader>uh", function()
+    vim.lsp.inlay_hint(0, nil)
+  end, { desc = "Toggle Inlay Hints" })
 end
 
 -- lazygit
-map("n", "<leader>gg", function() Util.terminal({ "lazygit" }, { cwd = Util.root(), esc_esc = false, ctrl_hjkl = false }) end, { desc = "Lazygit (root dir)" })
-map("n", "<leader>gG", function() Util.terminal({ "lazygit" }, {esc_esc = false, ctrl_hjkl = false}) end, { desc = "Lazygit (cwd)" })
+map("n", "<leader>gg", function()
+  Util.terminal({ "lazygit" }, { cwd = Util.root(), esc_esc = false, ctrl_hjkl = false })
+end, { desc = "Lazygit (root dir)" })
+map("n", "<leader>gG", function()
+  Util.terminal({ "lazygit" }, { esc_esc = false, ctrl_hjkl = false })
+end, { desc = "Lazygit (cwd)" })
 
 -- quit; disabled for now since I can make do with :qa
 -- map("n", "<leader>qq", "<cmd>qa<cr>", { desc = "Quit all" })
@@ -115,8 +103,12 @@ map("n", "<leader>gG", function() Util.terminal({ "lazygit" }, {esc_esc = false,
 -- highlights under cursor
 map("n", "<leader>ui", vim.show_pos, { desc = "Inspect Pos" })
 -- floating terminal
-local lazyterm = function() Util.terminal(nil, { cwd = Util.root() }) end
-local lazytermlocal = function() Util.terminal() end
+local lazyterm = function()
+  Util.terminal(nil, { cwd = Util.root() })
+end
+local lazytermlocal = function()
+  Util.terminal()
+end
 map("n", "<leader>T", lazyterm, { desc = "Terminal (root dir)" })
 map("n", "<leader>t", lazytermlocal, { desc = "Terminal (cwd)" })
 

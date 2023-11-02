@@ -47,6 +47,13 @@ vim.api.nvim_create_autocmd("BufReadPost", {
   end,
 })
 
+vim.api.nvim_create_autocmd("BufWritePre", {
+  group = augroup("auto_format"),
+  callback = function()
+    Util.format({ force = true })
+  end,
+})
+
 -- close some filetypes with <q>
 vim.api.nvim_create_autocmd("FileType", {
   group = augroup("close_with_q"),

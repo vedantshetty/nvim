@@ -29,6 +29,8 @@ opt.formatoptions = "jcroqlnt" -- tcqj
 opt.grepformat = "%f:%l:%c:%m"
 opt.grepprg = "rg --vimgrep" -- Ripgrep
 opt.ignorecase = true -- Ignore case
+opt.smartcase = true -- Case Sensitive if Capitals are used in search
+
 opt.laststatus = 3 -- Status bar only once at the bottom for all windows
 opt.showmode = false -- Dont show mode since we have a statusline
 opt.list = true -- Show some invisible characters (tabs...
@@ -45,9 +47,7 @@ opt.shiftwidth = 2 -- Size of an indent
 opt.shortmess:append({ W = true, I = true, c = true, C = true })
 opt.sidescrolloff = 8 -- Columns of context
 opt.signcolumn = "yes" -- Always show the signcolumn, otherwise it would shift the text each time
-opt.smartcase = true -- Don't ignore case with capitals
 opt.smartindent = true -- Insert indents automatically
-opt.spelllang = { "en" }
 opt.splitbelow = true -- Put new windows below current
 opt.splitkeep = "screen"
 opt.splitright = true -- Put new windows right of current
@@ -60,7 +60,7 @@ opt.updatetime = 200 -- Save swap file and trigger CursorHold
 opt.virtualedit = "block" -- Allow cursor to move where there is no text in visual block mode
 opt.wildmode = "longest:full,full" -- Command-line completion mode
 opt.winminwidth = 5 -- Minimum window width
-opt.wrap = false -- Disable line wrap
+opt.wrap = true -- Disable line wrap
 opt.fillchars = {
   foldopen = "",
   foldclose = "",
